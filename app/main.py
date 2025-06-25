@@ -1,7 +1,8 @@
 from fastapi import FastAPI
+from app.db import init_db
 
-app = FastAPI()
+clinical_app = FastAPI()
 
-@app.on_event("startup")
+@clinical_app.on_event("startup")
 async def startup():
-    print("Application is starting up...")
+    await init_db()
