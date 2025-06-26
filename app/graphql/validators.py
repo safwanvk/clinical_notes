@@ -39,10 +39,14 @@ class PatientUpdateValidator(BaseModel):
                   raise ValueError("Gender must be Male, Female, or Other")
             return v.title() if v else v
 
-class SymptomInputValidator(BaseModel):
+class BasicPatientInputValidator(BaseModel):
       patient_id: int = Field(..., gt=0, description="Patient ID must be a positive integer")
+
+class SymptomInputValidator(BasicPatientInputValidator):
       name: str = Field(..., min_length=2, description="Symptom name must be at least 2 characters")
 
-class MedicalHistoryInputValidator(BaseModel):
-      patient_id: int = Field(..., gt=0, description="Patient ID must be a positive integer")
+class MedicalHistoryInputValidator(BasicPatientInputValidator):
       description: str = Field(..., min_length=2, description="Medical history description must be at least 2 characters")
+
+class ConditionInputValidator(BasicPatientInputValidator):
+      name: str = Field(..., min_length=2, description="Condition name must be at least 2 characters")
