@@ -1,11 +1,12 @@
 import strawberry
 from app.graphql.types import (PatientInput, PatientType, PatientUpdateInput, SymptomInput, SymptomType, MedicalHistoryInput, MedicalHistoryType,
-                               ConditionInput, ConditionType, MedicationType, MedicationInput)
+                               ConditionInput, ConditionType, MedicationType, MedicationInput, ClinicalFindingType, ClinicalFindingInput)
 from app.services.patient_service import create_patient, update_patient_details
 from app.services.symptom_service import create_symptom
 from app.services.medical_history_service import create_medical_history
 from app.services.condition_service import create_condition
 from app.services.medication_service import create_medication
+from app.services.clinical_finding_service import create_clinical_finding
 from strawberry.exceptions import GraphQLError
 from pydantic import ValidationError
 
@@ -59,3 +60,11 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_medication(input)
+      @strawberry.mutation
+      async def add_clinical_finding(self, input: ClinicalFindingInput) -> ClinicalFindingType:
+            try:
+                  validated = input.to_pydantic()
+            except ValidationError as e:
+                  error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
+                  raise GraphQLError(f"Validation failed:\n{error_messages}")
+            return await create_clinical_finding(input)

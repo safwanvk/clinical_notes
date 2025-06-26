@@ -1,6 +1,6 @@
 import strawberry
 from app.graphql.validators import (PatientInputValidator, PatientUpdateValidator, SymptomInputValidator, MedicalHistoryInputValidator,
-                                    ConditionInputValidator, MedicationInputValidator)
+                                    ConditionInputValidator, MedicationInputValidator, ClinicalFindingInputValidator)
 
 @strawberry.type
 class SymptomType:
@@ -23,6 +23,11 @@ class MedicationType:
     name: str
 
 @strawberry.type
+class ClinicalFindingType:
+    id: int
+    note: str
+
+@strawberry.type
 class PatientType:
       id: int
       name: str
@@ -39,6 +44,7 @@ class PatientType:
       symptoms: list[SymptomType]
       conditions: list[ConditionType]
       medications: list[MedicationType]
+      clinical_findings: list[ClinicalFindingType]
 
 @strawberry.experimental.pydantic.input(model=PatientInputValidator, all_fields=True)
 class PatientInput:
@@ -62,4 +68,8 @@ class ConditionInput:
 
 @strawberry.experimental.pydantic.input(model=MedicationInputValidator, all_fields=True)
 class MedicationInput:
+      pass
+
+@strawberry.experimental.pydantic.input(model=ClinicalFindingInputValidator, all_fields=True)
+class ClinicalFindingInput:
       pass

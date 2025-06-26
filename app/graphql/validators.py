@@ -54,3 +54,6 @@ class ConditionInputValidator(BasicPatientInputValidator):
 class MedicationInputValidator(BasicPatientInputValidator):
       name: str = Field(..., min_length=2, description="Medication name must be at least 2 characters")
 
+class ClinicalFindingInputValidator(BasicPatientInputValidator):
+      note: str = Field(..., min_length=2, description="Clinical finding note must be at least 2 characters")
+

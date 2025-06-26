@@ -1,7 +1,7 @@
 from app.models import Patient
 from app.db import SessionLocal
 from app.graphql.types import (PatientType, PatientInput, PatientUpdateInput, SymptomType, MedicalHistoryType,
-                               ConditionType, MedicationType)
+                               ConditionType, MedicationType, ClinicalFindingType)
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from strawberry.exceptions import GraphQLError
@@ -54,7 +54,8 @@ async def get_patient_details(patient_id: int) -> PatientType:
                         selectinload(Patient.symptoms),
                         selectinload(Patient.medical_history),
                         selectinload(Patient.conditions),
-                        selectinload(Patient.medications)
+                        selectinload(Patient.medications),
+                        selectinload(Patient.clinical_findings)
                   ).where(Patient.id == patient_id)
                   result = await session.execute(stmt)
                   patient = result.scalars().first()
@@ -76,7 +77,8 @@ async def get_patient_details(patient_id: int) -> PatientType:
                         medical_history=[MedicalHistoryType(id=m.id, description=m.description) for m in patient.medical_history],
                         symptoms=[SymptomType(id=s.id, name=s.name) for s in patient.symptoms],
                         conditions=[ConditionType(id=c.id, name=c.name) for c in patient.conditions],
-                        medications=[MedicationType(id=med.id, name=med.name) for med in patient.medications]
+                        medications=[MedicationType(id=med.id, name=med.name) for med in patient.medications],
+                        clinical_findings=[ClinicalFindingType(id=cf.id, note=cf.note) for cf in patient.clinical_findings]
                   )
       except SQLAlchemyError as e:
             raise GraphQLError(f"Database error: {str(e)}")
