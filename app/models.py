@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from app.base import Base
 
 class Patient(Base):
@@ -14,3 +15,12 @@ class Patient(Base):
     bp = Column(String)
     glucose = Column(Integer)
     heart_rate = Column(Integer)
+
+    symptoms = relationship("Symptom", back_populates="patient")
+
+class Symptom(Base):
+    __tablename__ = 'symptoms'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    patient_id = Column(Integer, ForeignKey('patients.id'))
+    patient = relationship("Patient", back_populates="symptoms")

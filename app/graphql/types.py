@@ -1,5 +1,10 @@
 import strawberry
-from app.graphql.validators import PatientInputValidator, PatientUpdateValidator
+from app.graphql.validators import PatientInputValidator, PatientUpdateValidator, SymptomInputValidator
+
+@strawberry.type
+class SymptomType:
+    id: int
+    name: str
 
 @strawberry.type
 class PatientType:
@@ -14,6 +19,7 @@ class PatientType:
       bp: str
       glucose: int
       heart_rate: int
+      symptoms: list[SymptomType]
 
 @strawberry.experimental.pydantic.input(model=PatientInputValidator, all_fields=True)
 class PatientInput:
@@ -21,4 +27,8 @@ class PatientInput:
 
 @strawberry.experimental.pydantic.input(model=PatientUpdateValidator, all_fields=True)
 class PatientUpdateInput:
+      pass
+
+@strawberry.experimental.pydantic.input(model=SymptomInputValidator, all_fields=True)
+class SymptomInput:
       pass

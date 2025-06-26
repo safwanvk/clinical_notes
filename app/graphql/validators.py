@@ -38,3 +38,7 @@ class PatientUpdateValidator(BaseModel):
             if v is not None and v not in {"Male", "Female", "Other"}:
                   raise ValueError("Gender must be Male, Female, or Other")
             return v.title() if v else v
+
+class SymptomInputValidator(BaseModel):
+      patient_id: int = Field(..., gt=0, description="Patient ID must be a positive integer")
+      name: str = Field(..., min_length=2, description="Symptom name must be at least 2 characters")

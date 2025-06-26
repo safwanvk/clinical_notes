@@ -1,10 +1,11 @@
 from app.models import Patient
 from app.db import SessionLocal
-from app.graphql.types import PatientType, PatientInput, PatientUpdateInput
+from app.graphql.types import PatientType, PatientInput, PatientUpdateInput, SymptomType
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from strawberry.exceptions import GraphQLError
-from sqlalchemy import select
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 async def create_patient(input: PatientInput) -> PatientType:
       try:
@@ -48,25 +49,28 @@ async def create_patient(input: PatientInput) -> PatientType:
 async def get_patient_details(patient_id: int) -> PatientType:
       try:
             async with SessionLocal() as session:
-                  patient = await session.get(Patient, patient_id)
+                  stmt = select(Patient).options(selectinload(Patient.symptoms)).where(Patient.id == patient_id)
+                  result = await session.execute(stmt)
+                  patient = result.scalars().first()
                   if not patient:
                         raise GraphQLError(f"Patient with id {patient_id} not found.")
+
+                  return PatientType(
+                        id=patient.id,
+                        name=patient.name,
+                        gender=patient.gender,
+                        age=patient.age,
+                        blood_group=patient.blood_group,
+                        height_cm=patient.height_cm,
+                        weight_kg=patient.weight_kg,
+                        bmi=patient.bmi,
+                        bp=patient.bp,
+                        glucose=patient.glucose,
+                        heart_rate=patient.heart_rate,
+                        symptoms=[SymptomType(id=s.id, name=s.name) for s in patient.symptoms],
+                  )
       except SQLAlchemyError as e:
             raise GraphQLError(f"Database error: {str(e)}")
-
-      return PatientType(
-            id=patient.id,
-            name=patient.name,
-            gender=patient.gender,
-            age=patient.age,
-            blood_group=patient.blood_group,
-            height_cm=patient.height_cm,
-            weight_kg=patient.weight_kg,
-            bmi=patient.bmi,
-            bp=patient.bp,
-            glucose=patient.glucose,
-            heart_rate=patient.heart_rate
-      )
 
 async def update_patient_details(patient_id: int, input: PatientUpdateInput) -> PatientType:
       try:
