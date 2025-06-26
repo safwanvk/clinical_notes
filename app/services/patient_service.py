@@ -1,6 +1,6 @@
 from app.models import Patient
 from app.db import SessionLocal
-from app.graphql.types import PatientType, PatientInput, PatientUpdateInput, SymptomType
+from app.graphql.types import PatientType, PatientInput, PatientUpdateInput, SymptomType, MedicalHistoryType
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from strawberry.exceptions import GraphQLError
@@ -49,7 +49,10 @@ async def create_patient(input: PatientInput) -> PatientType:
 async def get_patient_details(patient_id: int) -> PatientType:
       try:
             async with SessionLocal() as session:
-                  stmt = select(Patient).options(selectinload(Patient.symptoms)).where(Patient.id == patient_id)
+                  stmt = select(Patient).options(
+                        selectinload(Patient.symptoms),
+                        selectinload(Patient.medical_history)
+                  ).where(Patient.id == patient_id)
                   result = await session.execute(stmt)
                   patient = result.scalars().first()
                   if not patient:
@@ -67,6 +70,7 @@ async def get_patient_details(patient_id: int) -> PatientType:
                         bp=patient.bp,
                         glucose=patient.glucose,
                         heart_rate=patient.heart_rate,
+                        medical_history=[MedicalHistoryType(id=m.id, description=m.description) for m in patient.medical_history],
                         symptoms=[SymptomType(id=s.id, name=s.name) for s in patient.symptoms],
                   )
       except SQLAlchemyError as e:

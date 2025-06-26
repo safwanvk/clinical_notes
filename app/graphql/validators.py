@@ -42,3 +42,7 @@ class PatientUpdateValidator(BaseModel):
 class SymptomInputValidator(BaseModel):
       patient_id: int = Field(..., gt=0, description="Patient ID must be a positive integer")
       name: str = Field(..., min_length=2, description="Symptom name must be at least 2 characters")
+
+class MedicalHistoryInputValidator(BaseModel):
+      patient_id: int = Field(..., gt=0, description="Patient ID must be a positive integer")
+      description: str = Field(..., min_length=2, description="Medical history description must be at least 2 characters")

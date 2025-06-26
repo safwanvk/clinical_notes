@@ -17,6 +17,7 @@ class Patient(Base):
     heart_rate = Column(Integer)
 
     symptoms = relationship("Symptom", back_populates="patient")
+    medical_history = relationship("MedicalHistory", back_populates="patient")
 
 class Symptom(Base):
     __tablename__ = 'symptoms'
@@ -24,3 +25,10 @@ class Symptom(Base):
     name = Column(String)
     patient_id = Column(Integer, ForeignKey('patients.id'))
     patient = relationship("Patient", back_populates="symptoms")
+
+class MedicalHistory(Base):
+    __tablename__ = 'medical_history'
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(String)
+    patient_id = Column(Integer, ForeignKey('patients.id'))
+    patient = relationship("Patient", back_populates="medical_history")
