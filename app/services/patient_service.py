@@ -1,7 +1,7 @@
 from app.models import Patient
 from app.db import SessionLocal
 from app.graphql.types import (PatientType, PatientInput, PatientUpdateInput, SymptomType, MedicalHistoryType,
-                               ConditionType)
+                               ConditionType, MedicationType)
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from strawberry.exceptions import GraphQLError
@@ -53,7 +53,8 @@ async def get_patient_details(patient_id: int) -> PatientType:
                   stmt = select(Patient).options(
                         selectinload(Patient.symptoms),
                         selectinload(Patient.medical_history),
-                        selectinload(Patient.conditions)
+                        selectinload(Patient.conditions),
+                        selectinload(Patient.medications)
                   ).where(Patient.id == patient_id)
                   result = await session.execute(stmt)
                   patient = result.scalars().first()
@@ -74,7 +75,8 @@ async def get_patient_details(patient_id: int) -> PatientType:
                         heart_rate=patient.heart_rate,
                         medical_history=[MedicalHistoryType(id=m.id, description=m.description) for m in patient.medical_history],
                         symptoms=[SymptomType(id=s.id, name=s.name) for s in patient.symptoms],
-                        conditions=[ConditionType(id=c.id, name=c.name) for c in patient.conditions]
+                        conditions=[ConditionType(id=c.id, name=c.name) for c in patient.conditions],
+                        medications=[MedicationType(id=med.id, name=med.name) for med in patient.medications]
                   )
       except SQLAlchemyError as e:
             raise GraphQLError(f"Database error: {str(e)}")

@@ -19,6 +19,7 @@ class Patient(Base):
     symptoms = relationship("Symptom", back_populates="patient")
     medical_history = relationship("MedicalHistory", back_populates="patient")
     conditions = relationship("Condition", back_populates="patient")
+    medications = relationship("Medication", back_populates="patient")
 
 class Symptom(Base):
     __tablename__ = 'symptoms'
@@ -40,3 +41,10 @@ class Condition(Base):
     name = Column(String)
     patient_id = Column(Integer, ForeignKey('patients.id'))
     patient = relationship("Patient", back_populates="conditions")
+
+class Medication(Base):
+    __tablename__ = 'medications'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    patient_id = Column(Integer, ForeignKey('patients.id'))
+    patient = relationship("Patient", back_populates="medications")
