@@ -9,10 +9,11 @@ from app.services.medication_service import create_medication
 from app.services.clinical_finding_service import create_clinical_finding
 from strawberry.exceptions import GraphQLError
 from pydantic import ValidationError
+from app.permission import IsAuthenticated
 
 @strawberry.type
 class Mutation:
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_patient(self, input: PatientInput) -> PatientType:
             try:
                   validated = input.to_pydantic()
@@ -20,7 +21,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_patient(input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def update_patient(self, id: int, input: PatientUpdateInput) -> PatientType:
             try:
                   validated = input.to_pydantic()
@@ -28,7 +29,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await update_patient_details(id, input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_symptom(self, input: SymptomInput) -> SymptomType:
             try:
                   validated = input.to_pydantic()
@@ -36,7 +37,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_symptom(input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_medical_history(self, input: MedicalHistoryInput) -> MedicalHistoryType:
             try:
                   validated = input.to_pydantic()
@@ -44,7 +45,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_medical_history(input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_condition(self, input: ConditionInput) -> ConditionType:
             try:
                   validated = input.to_pydantic()
@@ -52,7 +53,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_condition(input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_medication(self, input: MedicationInput) -> MedicationType:
             try:
                   validated = input.to_pydantic()
@@ -60,7 +61,7 @@ class Mutation:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await create_medication(input)
-      @strawberry.mutation
+      @strawberry.mutation(permission_classes=[IsAuthenticated])
       async def add_clinical_finding(self, input: ClinicalFindingInput) -> ClinicalFindingType:
             try:
                   validated = input.to_pydantic()
