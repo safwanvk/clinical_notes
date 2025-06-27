@@ -28,6 +28,20 @@ class ClinicalFindingType:
     note: str
 
 @strawberry.type
+class ResponsePatientType:
+      id: int
+      name: str
+      gender: str
+      age: int
+      blood_group: str
+      height_cm: int
+      weight_kg: int
+      bmi: float
+      bp: str
+      glucose: int
+      heart_rate: int
+
+@strawberry.type
 class PatientType:
       id: int
       name: str
