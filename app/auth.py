@@ -1,8 +1,9 @@
 from fastapi import Request, Header, HTTPException
 from typing import Optional
 import json
+from app.services.dependencies import get_service_context
 
-async def get_current_user(
+async def get_context(
             request: Request,
             authorization: Optional[str] = Header(None)
       ):
@@ -26,4 +27,9 @@ async def get_current_user(
       if token != "testtoken":
             raise HTTPException(status_code=403, detail="Invalid token")
 
-      return {"user_id": 1, "role": "admin"}
+      user = {"user": {"user_id": 1, "role": "admin"}}
+      services = await get_service_context()
+      return {
+            **user,
+            **services
+      }

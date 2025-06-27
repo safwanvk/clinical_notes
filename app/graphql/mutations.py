@@ -2,14 +2,11 @@ import strawberry
 from app.graphql.types import (PatientInput, PatientType, PatientUpdateInput, SymptomInput, SymptomType, MedicalHistoryInput, MedicalHistoryType,
                                ConditionInput, ConditionType, MedicationType, MedicationInput, ClinicalFindingType, ClinicalFindingInput)
 from app.services.patient_service import create_patient, update_patient_details
-from app.services.symptom_service import create_symptom
-from app.services.medical_history_service import create_medical_history
-from app.services.condition_service import create_condition
-from app.services.medication_service import create_medication
-from app.services.clinical_finding_service import create_clinical_finding
 from strawberry.exceptions import GraphQLError
 from pydantic import ValidationError
 from app.permission import IsAuthenticated
+from strawberry.types import Info
+
 
 @strawberry.type
 class Mutation:
@@ -30,42 +27,67 @@ class Mutation:
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
             return await update_patient_details(id, input)
       @strawberry.mutation(permission_classes=[IsAuthenticated])
-      async def add_symptom(self, input: SymptomInput) -> SymptomType:
+      async def add_or_update_symptom(
+                  self,
+                  input: SymptomInput,
+                  info: Info
+            ) -> SymptomType:
             try:
-                  validated = input.to_pydantic()
+                  service = info.context["symptom_service"]
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
-            return await create_symptom(input)
+            return await service.create_or_update(validated)
       @strawberry.mutation(permission_classes=[IsAuthenticated])
-      async def add_medical_history(self, input: MedicalHistoryInput) -> MedicalHistoryType:
+      async def add_or_update_medical_history(
+                  self,
+                  input: MedicalHistoryInput,
+                  info: Info
+            ) -> MedicalHistoryType:
             try:
-                  validated = input.to_pydantic()
+                  service = info.context["medical_history_service"]
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
-            return await create_medical_history(input)
+            return await service.create_or_update(validated)
       @strawberry.mutation(permission_classes=[IsAuthenticated])
-      async def add_condition(self, input: ConditionInput) -> ConditionType:
+      async def add_or_update_condition(
+                  self,
+                  input: ConditionInput,
+                  info: Info
+            ) -> ConditionType:
             try:
-                  validated = input.to_pydantic()
+                  service = info.context["condition_service"]
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
-            return await create_condition(input)
+            return await service.create_or_update(validated)
       @strawberry.mutation(permission_classes=[IsAuthenticated])
-      async def add_medication(self, input: MedicationInput) -> MedicationType:
+      async def add_or_update_medication(
+                  self,
+                  input: MedicationInput,
+                  info: Info
+            ) -> MedicationType:
             try:
-                  validated = input.to_pydantic()
+                  service = info.context["medication_service"]
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
-            return await create_medication(input)
+            return await service.create_or_update(validated)
       @strawberry.mutation(permission_classes=[IsAuthenticated])
-      async def add_clinical_finding(self, input: ClinicalFindingInput) -> ClinicalFindingType:
+      async def add_or_update_clinical_finding(
+                  self,
+                  input: ClinicalFindingInput,
+                  info: Info
+            ) -> ClinicalFindingType:
             try:
-                  validated = input.to_pydantic()
+                  service = info.context["clinical_finding_service"]
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")
-            return await create_clinical_finding(input)
+            return await service.create_or_update(validated)
