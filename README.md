@@ -49,7 +49,11 @@ A FastAPI application using Strawberry GraphQL and SQLAlchemy (async) for managi
    Create a `.env` file in the `app` directory with:
 
    ```
-   DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/clinical_notes
+   POSTGRES_HOST=postgres
+   POSTGRES_PORT=5432
+   POSTGRES_DB=clinical_notes_db
+   POSTGRES_USER=user
+   POSTGRES_PASSWORD=password
    ENV=development
    ```
 
