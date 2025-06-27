@@ -29,8 +29,8 @@ async def get_context(
             raise HTTPException(status_code=403, detail="Invalid token")
 
       user = {"user": {"user_id": 1, "role": "admin"}}
-      services = await get_service_context()
       session = SessionLocal()
+      services = await get_service_context(session)
       return {
             **user,
             "session": session,
