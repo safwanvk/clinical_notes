@@ -2,6 +2,7 @@ from fastapi import Request, Header, HTTPException
 from typing import Optional
 import json
 from app.services.dependencies import get_service_context
+from app.db import SessionLocal
 
 async def get_context(
             request: Request,
@@ -29,7 +30,9 @@ async def get_context(
 
       user = {"user": {"user_id": 1, "role": "admin"}}
       services = await get_service_context()
+      session = SessionLocal()
       return {
             **user,
+            "session": session,
             **services
       }
