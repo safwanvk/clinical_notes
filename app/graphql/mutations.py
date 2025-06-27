@@ -44,7 +44,7 @@ class Mutation:
             ) -> SymptomType:
             try:
                   service = info.context["symptom_service"]
-                  validated = input.to_pydantic()
+                  validated = input.to_pydantic().dict()
             except ValidationError as e:
                   error_messages = "\n".join(f"{err['loc'][0]}: {err['msg']}" for err in e.errors())
                   raise GraphQLError(f"Validation failed:\n{error_messages}")

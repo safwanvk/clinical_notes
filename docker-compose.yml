@@ -32,6 +32,14 @@ services:
     container_name: adminer
     ports:
       - "8080:8080"
+  
+  test:
+    build: .
+    command: pytest
+    volumes:
+      - .:/app
+    depends_on:
+      - app
 
 volumes:
   postgres_data:
